@@ -43,8 +43,8 @@ def train_loop(rank, dataloader, model, loss_fn, optimizer):
         optimizer.step()
 
         if batch % 2 == 0:
-                loss, current = loss.item(), batch * len(X)
-                print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+            loss, current = loss.item(), batch * len(X)
+            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
 def main(device):
     train_dataloader = prepare_data()

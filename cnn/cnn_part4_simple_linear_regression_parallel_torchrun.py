@@ -11,13 +11,13 @@ from torch.nn.parallel import DistributedDataParallel as DDP
 
 ##############################################
 # 1. Create a process group
-def init_distributed(local_rank, world_size):
+def init_distributed():
     '''
     local_rank: identifier for pariticular GPU on one node
     world: total number of process in a the group
     '''
-    os.environ['MASTER_ADDR'] = 'localhost'           # IP address of rank 0 process
-    os.environ['MASTER_PORT'] = '12355'               # a free port used to communicate amongst processors
+    world_size = int(os.environ['WORLD_SIZE'])
+    local_rank = int(os.environ['LOCAL_RANK'])
     torch.cuda.set_device(local_rank)                 
     dist.init_process_group("nccl",                   # backend being used; nccl typically used with distributed GPU training
                             rank=local_rank,          # rank of the current process being used
@@ -66,14 +66,16 @@ def train_loop(rank, dataloader, model, loss_fn, optimizer):
             loss, current = loss.item(), batch * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
-def main(rank, world_size):
-    init_distributed(rank, world_size)
+def main():
+    local_rank = int(os.environ['LOCAL_RANK'])
+
+    init_distributed()
 
     train_dataloader = prepare_data()
 
     ##############################################
     # 3. Wrap Model with Pytorch's DistributedDataParallel
-    model = DDP(get_model().to(rank), device_ids=[rank], output_device=rank)
+    model = DDP(get_model().to(local_rank), device_ids=[local_rank], output_device=local_rank)
     ##############################################
     
     # instantiate loss and optimizer 
@@ -85,10 +87,10 @@ def main(rank, world_size):
     for t in range(epochs):
         ################################################
         # 4. Only write/print model information on one GPU
-        if rank == 0:
+        if local_rank == 0:
             print(f"Epoch {t+1}\n-------------------------------")
         ################################################
-        train_loop(rank, train_dataloader, model, loss_fn, optimizer)
+        train_loop(local_rank, train_dataloader, model, loss_fn, optimizer)
 
     #################################################
     # 5. Close Process Group
@@ -99,5 +101,4 @@ def main(rank, world_size):
     return model
 
 if __name__ == "__main__":
-    world_size= torch.cuda.device_count()
-    mp.spawn(main, args=(world_size,) , nprocs=world_size)
+    main()
