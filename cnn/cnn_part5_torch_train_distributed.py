@@ -237,16 +237,17 @@ def main():
     hp = {"lr": 1e-4, "batch_size": 16, "epochs": 5}
 
     # Please specify the path to train, cross_validation, and test images below:
-    train_path = os.path.join(os.environ['WORK'], "Dataset_2/Train/")
-    val_path   = os.path.join(os.environ['WORK'], "Dataset_2/Validation/")
-    test_path  = None
 
+    train_path = os.path.join(os.environ['SCRATCH'], "Dataset_2/Train/")
+    val_path   = os.path.join(os.environ['SCRATCH'], "Dataset_2/Validation/")
+    test_path  = None
+    
     local_rank = int(os.environ["LOCAL_RANK"])
     rank = int(os.environ["RANK"])
     DEVICE = torch.device("cuda", local_rank)
 
     # For saving the trained model
-    model_folder_path = os.path.join(os.environ['WORK'], "cnn5_output_model") 
+    model_folder_path = os.path.join(os.environ['SCRATCH'], "cnn5_output_model") 
     os.makedirs(model_folder_path,exist_ok=True)
 
     # same loss function as part 2

@@ -31,7 +31,7 @@ class Net(nn.Module):
 def prepare_data(batch_size=32):
 
     trainset = torchvision.datasets.MNIST(
-                            root=os.path.join(os.environ['WORK'], "data"),      # path to where data is stored
+                            root=os.path.join(os.environ['SCRATCH'], "data"),      # path to where data is stored
                             train=True,                                         # specifies if data is train or test
                             download=True,                                      # downloads data if not available at root
                             transform=torchvision.transforms.ToTensor()         # trasforms both features and targets accordingly
@@ -97,7 +97,7 @@ def main():
     # A. Create location to store checkpoints
 
     # Create directory for storing checkpointed model
-    model_folder_path = os.path.join(os.environ['WORK'], "cnn4_mnist_output_model") # create variable for path to folder for checkpoints
+    model_folder_path = os.path.join(os.environ['SCRATCH'], "cnn4_mnist_output_model") # create variable for path to folder for checkpoints
     os.makedirs(model_folder_path,exist_ok=True)                              # create directory for models if they do not exist
     # create file name for checkpoint 
     checkpoint_file = os.path.join(model_folder_path, "best_model.pt")        # create filename for model checkpoint

@@ -1,9 +1,9 @@
 #!/bin/bash
 LOCAL_RANK=$PMI_RANK
 
-NODEFILE="$WORK/hostfile"
+NODEFILE="$SCRATCH/hostfile"
 scontrol show hostnames > $NODEFILE
-if [[ -s "$NODEFILE" ]]; then
+if [[ -z "$NODEFILE" ]]; then
     RANKS=$NODEFILE
     NNODES=1
 else

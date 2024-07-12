@@ -104,7 +104,7 @@ def train(train_loader, val_loader, model, opt, scheduler, loss_fn, epoch_start,
 
     local_rank = int(os.environ['LOCAL_RANK'])
   
-    best_val_acc = torch.tensor(0.0).cuda() if prev_best_val_acc is None else prev_best_val_acc
+    best_val_acc = torch.tensor(0.0).to(DEVICE) if prev_best_val_acc is None else prev_best_val_acc
     
     for epoch in range(epoch_start, epochs):
         model.train(True)
@@ -133,7 +133,7 @@ def train(train_loader, val_loader, model, opt, scheduler, loss_fn, epoch_start,
     
         end_time = datetime.now()
     
-        total_time = torch.tensor((end_time-start_time).seconds).cuda()
+        total_time = torch.tensor((end_time-start_time).seconds).to(DEVICE)
     
         # Learning rate reducer takes action
         scheduler.step(val_loss)
@@ -195,14 +195,14 @@ def main():
     hp = {"lr":1e-4, "batch_size":16, "epochs":5}
     
     # Please specify the path to train, cross_validation, and test images below:
-    train_path = os.path.join(os.environ['WORK'], "Dataset_2/Train/")
-    val_path   = os.path.join(os.environ['WORK'], "Dataset_2/Validation/")
+    train_path = os.path.join(os.environ['SCRATCH'], "Dataset_2/Train/")
+    val_path   = os.path.join(os.environ['SCRATCH'], "Dataset_2/Validation/")
     test_path  = None
     
     local_rank = int(os.environ['LOCAL_RANK'])
     DEVICE = torch.device("cuda", local_rank)
     
-    model_folder_path = os.path.join(os.environ['WORK'], "cnn4_damagelevel_output_model") 
+    model_folder_path = os.path.join(os.environ['SCRATCH'], "cnn4_damagelevel_output_model") 
     os.makedirs(model_folder_path,exist_ok=True)
     
     # same loss function as part 2 

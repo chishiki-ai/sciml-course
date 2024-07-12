@@ -30,7 +30,7 @@ class Net(nn.Module):
 def prepare_data(local_rank, world_size, batch_size=32):
         
     trainset = torchvision.datasets.MNIST(
-                            root=os.path.join(os.environ['WORK'], "data"),      # path to where data is stored
+                            root=os.path.join(os.environ['SCRATCH'], "data"),   # path to where data is stored
                             train=True,                                         # specifies if data is train or test
                             download=True,                                      # downloads data if not available at root
                             transform=torchvision.transforms.ToTensor()         # trasforms both features and targets accordingly
@@ -103,7 +103,7 @@ def main(local_rank, world_size):
     ################################################
     
     # instantiate loss and optimizer 
-    loss_fn = torch.nn.CrossEntropyLoss() #torch.nn.MSELoss(reduction='mean')
+    loss_fn = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=4*0.001)
 
     # Train Model 
